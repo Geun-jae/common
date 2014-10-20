@@ -4,41 +4,51 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ValidationUtils {
-	public static String checkEmail( String email ) {
+	/**
+	 * 이메일 체크
+	 * @param email
+	 * @return
+	 */
+	public static boolean isEmail(String email) {
+		boolean isEmail = false;
 		try{
 			if(ObjectUtils.isEmpty(email)) {
 				throw new Exception();
 			}
-			Pattern p =Pattern.compile("^\\.|^\\@");
-			Matcher m =p.matcher(email);
-			if (m.find()) {
-				throw new Exception();
+			Pattern pattern = Pattern.compile("^([\\w-]+(?:\\.[\\w-]+)*)@((?:[\\w-]+\\.)*\\w[\\w-]{0,66})\\.([a-z]{2,6}(?:\\.[a-z]{2})?)$");
+			Matcher matcher = pattern.matcher(email);
+			if (matcher.find()) {
+				isEmail = true;
 			}
-
-			p =Pattern.compile("^www\\.");
-			m =p.matcher(email);
-			if (m.find()) {
-				throw new Exception();
-			}
-			p = Pattern.compile("[^A-Za-z0-9\\.\\@_\\-~#]+");
-			m = p.matcher(email);
-
-			StringBuffer sb = new StringBuffer();
-			boolean result = m.find();
-			boolean deletedIllegalChars = false;
-			while(result) {
-				deletedIllegalChars = true;
-				m.appendReplacement(sb, "");
-				result = m.find();
-			}
-			m.appendTail(sb);
-			email = sb.toString();
-			if (deletedIllegalChars) {
-				throw new Exception();
-			}
-		} catch(Exception e) {
-			email = "";
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			isEmail = false;
 		}
-		return email;
+		return isEmail;
 	}
+
+	/**
+	 * 전화번호 체크
+	 * @param phone
+	 * @return
+	 */
+	public static boolean isPhone(String phone) {
+		boolean isPhone = false;
+		try{
+			if(ObjectUtils.isEmpty(phone)) {
+				throw new Exception();
+			}
+			phone = NumberUtils.fmtDigit(phone);
+			Pattern pattern = Pattern.compile("(^0[1-9][0-9]?)([1-9][0-9]{2,3})([0-9]{4})$");
+			Matcher matcher = pattern.matcher(phone);
+			if (matcher.find()) {
+				isPhone = true;
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			isPhone = false;
+		}
+		return isPhone;
+	}
+
 }

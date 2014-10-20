@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ObjectUtils {
-
 	/**
 	 * Null 체크
 	 * @param obj	해당 Object
