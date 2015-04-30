@@ -4,17 +4,21 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -274,5 +278,46 @@ public class FileUtils {
 	 */
 	public static JSONObject doJsonUrl(URL url) throws Exception {
 		return new JSONObject(doUrl(url));
+	}
+
+	/**
+	 * 파일 다운로드
+	 * @param response
+	 * @param request
+	 * @param path
+	 * @param fileName
+	 * @throws Exception
+	 */
+	public static void getFileDown(HttpServletResponse response, HttpServletRequest request, String path, String fileName) throws Exception {
+		response.setContentType("application/octet-stream");
+		String agent = request.getHeader("USER-agent").toLowerCase();
+
+		if (agent.indexOf("msie") > 0 || agent.indexOf("trident") > 0) {
+			int i = agent.indexOf('M', 2);
+
+			String IEV = agent.substring(i + 5, i + 8);
+
+			if (IEV.equalsIgnoreCase("5.5")) {
+				response.setHeader("Content-Disposition" , "filename=" + fileName);
+			} else {
+				response.setHeader("Content-Disposition" , "attachment;filename=" + fileName);
+			}
+		} else {
+			response.setHeader("Content-Disposition" , "attachment;filename=" + fileName);
+		}
+		byte b[] = new byte[1024];
+		File file = new File(path + fileName);
+
+		if (file.isFile()) {
+			BufferedInputStream fin = new BufferedInputStream(new FileInputStream(file));
+			BufferedOutputStream outs = new BufferedOutputStream(response.getOutputStream());
+			int read = 0;
+			while ((read = fin.read(b)) != -1) {
+				outs.write(b, 0, read);
+			}
+			outs.flush();
+			outs.close();
+			fin.close();
+		}
 	}
 }
