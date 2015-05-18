@@ -247,4 +247,49 @@ public class DateUtils {
 		}
 		return result;
 	}
+
+	/**
+	 * 날짜 포맷 변환
+	 * 기본 포맷 yyyyMMdd -> yyyy/MM/dd
+	 * (yyyy: 년도 , MM: 월 , dd : 일)
+	 * @param calendar	날짜
+	 * @return
+	 */
+	public static String changeDateFormat(Calendar calendar) {
+		return changeDateFormat(calendar , "yyyyMMdd" , "yyyy/MM/dd");
+	}
+	/**
+	 * 날짜 포맷 변환
+	 * 기본 포맷 yyyyMMdd
+	 * (yyyy: 년도 , MM: 월 , dd : 일)
+	 * @param calendar		날짜
+	 * @param endformat		반환포맷
+	 * @return
+	 */
+	public static String changeDateFormat(Calendar calendar, String endformat) {
+		return changeDateFormat(calendar , "yyyyMMdd" , endformat);
+	}
+	/**
+	 * 날짜 포맷 변환
+	 * (yyyy: 년도 , MM: 월 , dd : 일)
+	 * @param calendar			날짜
+	 * @param orformat		기본포맷
+	 * @param endformat		반환포맷
+	 * @return
+	 */
+	public static String changeDateFormat(Calendar calendar, String orformat, String endformat) {
+		String result = null;
+		try {
+			if (ObjectUtils.isEmpty(calendar)) {
+				return "";
+			}
+			SimpleDateFormat format = new SimpleDateFormat(orformat);
+			format = new SimpleDateFormat(endformat);
+			result = format.format(calendar.getTime());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			result = "";
+		}
+		return result;
+	}
 }
